@@ -27,3 +27,21 @@ export interface Profile {
   display_name: string | null
   created_at: string
 }
+
+export interface Badge {
+  id: string
+  name: string
+  description: string
+  icon: string
+  requirement: string
+  unlocked: boolean
+}
+
+export interface Task {
+  id: string
+  user_id: string
+  title: string
+  completed: boolean
+  date: string
+  created_at: string
+}
