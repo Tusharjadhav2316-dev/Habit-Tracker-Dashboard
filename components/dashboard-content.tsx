@@ -14,8 +14,9 @@ import { HabitList } from "@/components/habit-list"
 import { AddHabitDialog } from "@/components/add-habit-dialog"
 import { DailyFocusView } from "@/components/daily-focus-view"
 import { WeeklyView } from "@/components/weekly-view"
-import  BadgesView  from "@/components/badges-view"
-
+import { BadgesView } from "@/components/badges-view"
+import { IncompleteHabitReminder } from "@/components/incomplete-habit-reminder"
+import { StreakFeedback } from "@/components/streak-feedback"
 
 interface DashboardContentProps {
   user: User
@@ -123,6 +124,31 @@ export function DashboardContent({ user }: DashboardContentProps) {
     }
   }
 
+  const calculateStreak = () => {
+    const sortedDates = [...new Set(logs.map((log) => log.date))].sort().reverse()
+    let streak = 0
+    const today = new Date()
+
+    for (let i = 0; i < sortedDates.length; i++) {
+      const checkDate = new Date(today)
+      checkDate.setDate(checkDate.getDate() - i)
+      const dateStr = checkDate.toISOString().split("T")[0]
+
+      const dayLogs = logs.filter((log) => log.date === dateStr)
+      const completed = dayLogs.filter((log) => log.status === "completed").length
+
+      if (completed > 0) {
+        streak++
+      } else {
+        break
+      }
+    }
+
+    return streak
+  }
+
+  const currentStreak = calculateStreak()
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -133,6 +159,8 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <IncompleteHabitReminder habits={habits} logs={logs} onCompleteNow={() => setCurrentView("daily")} />
+
       <DashboardHeader>
         <Button variant="ghost" size="icon" onClick={handleLogout}>
           <LogOut className="size-5" />
@@ -141,66 +169,72 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
       <div className="border-b bg-card">
         <div className="container mx-auto px-4">
-          <div className="flex gap-1">
+          <div className="no-scrollbar flex gap-1 overflow-x-auto">
             <Button
               variant={currentView === "overview" ? "default" : "ghost"}
               onClick={() => setCurrentView("overview")}
-              className="gap-2"
+              className="gap-2 whitespace-nowrap"
             >
               <Home className="size-4" />
-              Overview
+              <span className="hidden sm:inline">Overview</span>
             </Button>
             <Button
               variant={currentView === "daily" ? "default" : "ghost"}
               onClick={() => setCurrentView("daily")}
-              className="gap-2"
+              className="gap-2 whitespace-nowrap"
             >
               <Calendar className="size-4" />
-              Daily Focus
+              <span className="hidden sm:inline">Daily Focus</span>
             </Button>
             <Button
               variant={currentView === "weekly" ? "default" : "ghost"}
               onClick={() => setCurrentView("weekly")}
-              className="gap-2"
+              className="gap-2 whitespace-nowrap"
             >
               <BarChart3 className="size-4" />
-              Weekly
+              <span className="hidden sm:inline">Weekly</span>
             </Button>
             <Button
               variant={currentView === "badges" ? "default" : "ghost"}
               onClick={() => setCurrentView("badges")}
-              className="gap-2"
+              className="gap-2 whitespace-nowrap"
             >
               <Award className="size-4" />
-              Badges
+              <span className="hidden sm:inline">Badges</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-6 sm:py-8">
         {currentView === "overview" && (
           <>
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-3xl font-bold">Your Habits</h1>
-                <p className="text-muted-foreground">Track your daily progress and build consistency</p>
+                <h1 className="text-2xl font-bold sm:text-3xl">Your Habits</h1>
+                <p className="text-sm text-muted-foreground sm:text-base">
+                  Track your daily progress and build consistency
+                </p>
               </div>
-              <Button onClick={() => setIsAddDialogOpen(true)}>
+              <Button onClick={() => setIsAddDialogOpen(true)} className="w-full sm:w-auto">
                 <Plus className="mr-2 size-4" />
                 Add Habit
               </Button>
+            </div>
+
+            <div className="mb-6">
+              <StreakFeedback streak={currentStreak} />
             </div>
 
             <div onClick={() => setCurrentView("daily")} className="cursor-pointer">
               <KPICards habits={habits} logs={logs} />
             </div>
 
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               <ProgressCharts habits={habits} logs={logs} />
             </div>
 
-            <div className="mt-8">
+            <div className="mt-6 sm:mt-8">
               <HabitList habits={habits} logs={logs} onLogStatus={handleLogStatus} onDeleteHabit={handleDeleteHabit} />
             </div>
           </>

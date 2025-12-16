@@ -87,18 +87,18 @@ export function KPICards({ habits, logs }: KPICardsProps) {
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
       {kpis.map((kpi) => (
-        <Card key={kpi.label}>
-          <CardContent className="p-6">
+        <Card key={kpi.label} className="transition-shadow hover:shadow-md">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{kpi.label}</p>
-                <p className="mt-2 text-3xl font-bold">{kpi.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{kpi.subtext}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-muted-foreground sm:text-sm">{kpi.label}</p>
+                <p className="mt-1 text-2xl font-bold sm:mt-2 sm:text-3xl">{kpi.value}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1 sm:text-sm">{kpi.subtext}</p>
               </div>
-              <div className={`rounded-lg p-3 ${kpi.bgColor}`}>
-                <kpi.icon className={`size-5 ${kpi.color}`} />
+              <div className={`rounded-lg p-2 sm:p-3 ${kpi.bgColor}`}>
+                <kpi.icon className={`size-4 sm:size-5 ${kpi.color}`} />
               </div>
             </div>
           </CardContent>

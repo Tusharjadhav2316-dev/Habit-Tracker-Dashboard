@@ -72,66 +72,84 @@ export function ProgressCharts({ habits, logs }: ProgressChartsProps) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid gap-4 sm:gap-6 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Progress</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Monthly Progress</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={monthlyData}>
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-              <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} domain={[0, 100]} />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const data = payload[0].payload
-                    return (
-                      <div className="rounded-lg border bg-background p-2 shadow-sm">
-                        <p className="text-sm font-medium">
-                          {data.completed}/{data.total} completed
-                        </p>
-                        <p className="text-sm text-muted-foreground">{data.percentage}%</p>
-                      </div>
-                    )
-                  }
-                  return null
-                }}
-              />
-              <Bar dataKey="percentage" radius={[4, 4, 0, 0]}>
-                {monthlyData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={getColor(entry.percentage)} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          {habits.length === 0 ? (
+            <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+              No data yet. Add habits to see your progress!
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={monthlyData}>
+                <XAxis dataKey="date" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
+                <YAxis tick={{ fontSize: 10 }} tickLine={false} axisLine={false} domain={[0, 100]} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload
+                      return (
+                        <div className="rounded-lg border bg-background p-2 shadow-sm">
+                          <p className="text-xs font-medium sm:text-sm">
+                            {data.completed}/{data.total} completed
+                          </p>
+                          <p className="text-xs text-muted-foreground sm:text-sm">{data.percentage}%</p>
+                        </div>
+                      )
+                    }
+                    return null
+                  }}
+                />
+                <Bar dataKey="percentage" radius={[4, 4, 0, 0]}>
+                  {monthlyData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={getColor(entry.percentage)} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>90-Day Consistency</CardTitle>
+          <CardTitle className="text-base sm:text-lg">90-Day Consistency</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-13 gap-1">
-            {heatmapData.map((day, index) => (
-              <div
-                key={index}
-                className="aspect-square rounded-sm"
-                style={{ backgroundColor: getHeatColor(day.value) }}
-                title={`${day.date}: ${day.value} habits completed`}
-              />
-            ))}
-          </div>
-          <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Less</span>
-            <div className="flex gap-1">
-              {[0, 1, 2, 3, 4].map((val) => (
-                <div key={val} className="size-3 rounded-sm" style={{ backgroundColor: getHeatColor(val) }} />
-              ))}
+          {habits.length === 0 ? (
+            <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+              No activity yet. Start tracking habits!
             </div>
-            <span>More</span>
-          </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-13 gap-0.5 sm:gap-1">
+                {heatmapData.map((day, index) => (
+                  <div
+                    key={index}
+                    className="aspect-square rounded-sm transition-colors hover:opacity-80"
+                    style={{ backgroundColor: getHeatColor(day.value) }}
+                    title={`${day.date}: ${day.value} habits completed`}
+                  />
+                ))}
+              </div>
+              <div className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground sm:mt-4 sm:text-sm">
+                <span>Less</span>
+                <div className="flex gap-0.5 sm:gap-1">
+                  {[0, 1, 2, 3, 4].map((val) => (
+                    <div
+                      key={val}
+                      className="size-2.5 rounded-sm sm:size-3"
+                      style={{ backgroundColor: getHeatColor(val) }}
+                    />
+                  ))}
+                </div>
+                <span>More</span>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

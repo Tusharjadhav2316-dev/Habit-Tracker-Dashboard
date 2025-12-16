@@ -53,35 +53,35 @@ export function WeeklyView({ habits, logs }: WeeklyViewProps) {
     weekCompletion.total > 0 ? Math.round((weekCompletion.completed / weekCompletion.total) * 100) : 0
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Week Overview */}
       <Card>
         <CardHeader>
-          <CardTitle>Week Overview</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Week Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-4 text-center">
-            <p className="text-4xl font-bold">{weekPercentage}%</p>
-            <p className="text-sm text-muted-foreground">Weekly Completion</p>
+            <p className="text-3xl font-bold sm:text-4xl">{weekPercentage}%</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Weekly Completion</p>
           </div>
         </CardContent>
       </Card>
 
       {/* Daily Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4 lg:grid-cols-7">
         {weekDays.map((day, index) => {
           const { completed, total, percentage } = getDayCompletion(day)
           const isToday = day.toISOString().split("T")[0] === new Date().toISOString().split("T")[0]
 
           return (
             <Card key={index} className={isToday ? "border-primary" : ""}>
-              <CardContent className="p-4">
+              <CardContent className="p-3 sm:p-4">
                 <div className="text-center">
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-xs font-medium text-muted-foreground sm:text-sm">
                     {day.toLocaleDateString("en-US", { weekday: "short" })}
                   </p>
-                  <p className="text-lg font-semibold">{day.getDate()}</p>
-                  <div className="relative mx-auto mt-3 size-20">
+                  <p className="text-base font-semibold sm:text-lg">{day.getDate()}</p>
+                  <div className="relative mx-auto mt-2 size-16 sm:mt-3 sm:size-20">
                     <svg className="size-full -rotate-90" viewBox="0 0 100 100">
                       <circle
                         cx="50"
@@ -100,14 +100,14 @@ export function WeeklyView({ habits, logs }: WeeklyViewProps) {
                         stroke="currentColor"
                         strokeWidth="10"
                         strokeDasharray={`${percentage * 2.513} 251.3`}
-                        className="text-primary"
+                        className="text-primary transition-all duration-300"
                       />
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-sm font-bold">{percentage}%</span>
+                      <span className="text-xs font-bold sm:text-sm">{percentage}%</span>
                     </div>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground sm:mt-2">
                     {completed}/{total}
                   </p>
                 </div>
@@ -120,57 +120,64 @@ export function WeeklyView({ habits, logs }: WeeklyViewProps) {
       {/* Weekly Habit Grid */}
       <Card>
         <CardHeader>
-          <CardTitle>Weekly Habit Checklist</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Weekly Habit Checklist</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-left text-sm font-medium">Habit</th>
-                  {weekDays.map((day, index) => (
-                    <th key={index} className="px-2 py-2 text-center text-xs font-medium">
-                      {day.toLocaleDateString("en-US", { weekday: "short" })}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {habits.map((habit) => (
-                  <tr key={habit.id} className="border-t">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <div className="size-3 rounded-full" style={{ backgroundColor: habit.color }} />
-                        <span className="text-sm">{habit.name}</span>
-                      </div>
-                    </td>
-                    {weekDays.map((day, index) => {
-                      const status = getHabitStatusForDate(habit.id, day)
-                      return (
-                        <td key={index} className="px-2 py-3 text-center">
-                          {status === "completed" ? (
-                            <div className="mx-auto flex size-6 items-center justify-center rounded-full bg-green-500">
-                              <Check className="size-4 text-white" />
-                            </div>
-                          ) : status === "skipped" ? (
-                            <div className="mx-auto flex size-6 items-center justify-center rounded-full bg-yellow-500">
-                              <Minus className="size-4 text-white" />
-                            </div>
-                          ) : status === "missed" ? (
-                            <div className="mx-auto flex size-6 items-center justify-center rounded-full bg-red-500">
-                              <X className="size-4 text-white" />
-                            </div>
-                          ) : (
-                            <div className="mx-auto size-6 rounded-full bg-muted" />
-                          )}
-                        </td>
-                      )
-                    })}
+          {habits.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">No habits yet. Add one from the Overview!</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead>
+                  <tr>
+                    <th className="px-2 py-2 text-left text-xs font-medium sm:px-4 sm:text-sm">Habit</th>
+                    {weekDays.map((day, index) => (
+                      <th key={index} className="px-1 py-2 text-center text-xs font-medium sm:px-2">
+                        {day.toLocaleDateString("en-US", { weekday: "short" })}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {habits.map((habit) => (
+                    <tr key={habit.id} className="border-t">
+                      <td className="px-2 py-2 sm:px-4 sm:py-3">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="size-2 shrink-0 rounded-full sm:size-3"
+                            style={{ backgroundColor: habit.color }}
+                          />
+                          <span className="truncate text-xs sm:text-sm">{habit.name}</span>
+                        </div>
+                      </td>
+                      {weekDays.map((day, index) => {
+                        const status = getHabitStatusForDate(habit.id, day)
+                        return (
+                          <td key={index} className="px-1 py-2 text-center sm:px-2 sm:py-3">
+                            {status === "completed" ? (
+                              <div className="mx-auto flex size-5 items-center justify-center rounded-full bg-green-500 sm:size-6">
+                                <Check className="size-3 text-white sm:size-4" />
+                              </div>
+                            ) : status === "skipped" ? (
+                              <div className="mx-auto flex size-5 items-center justify-center rounded-full bg-yellow-500 sm:size-6">
+                                <Minus className="size-3 text-white sm:size-4" />
+                              </div>
+                            ) : status === "missed" ? (
+                              <div className="mx-auto flex size-5 items-center justify-center rounded-full bg-red-500 sm:size-6">
+                                <X className="size-3 text-white sm:size-4" />
+                              </div>
+                            ) : (
+                              <div className="mx-auto size-5 rounded-full bg-muted sm:size-6" />
+                            )}
+                          </td>
+                        )
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
