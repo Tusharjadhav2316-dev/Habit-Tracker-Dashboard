@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.habit_tracker_dashboard_blond.twa",
+      "sha256_cert_fingerprints": [
+        "90:6A:CF:DB:39:BE:81:B7:F4:6D:48:E2:65:BC:53:11:92:9D:32:E8:B3:A6:0A:F8:17:AB:4A:6D:EC:88:6B:C0"
+      ]
+    }
+  }
+]
